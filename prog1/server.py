@@ -27,7 +27,7 @@ import Queue
 
 
 
-if(len(sys.argv) != 4):
+if(len(sys.argv) != 5):
 	print "Invalid number of arguments. Invoke the server using: python server.py <port> <mode> <server key filename> <client public key filename>, where <mode> is either u or t, <server key filename> is the name of the file containing the server's private and public RSA keys, <client public key filename> is the name of the file containing the client's public RSA key"
 serverPort = int(sys.argv[1])
 mode = sys.argv[2]
