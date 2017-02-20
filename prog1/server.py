@@ -24,17 +24,7 @@ import datetime
 import Queue
 
 
-##**TODO: move this into another file just for generating server keys
 
-# server_key = RSA.generate(2048)
-# f = open('server_key.pem', 'w')
-# f.write(server_key.exportKey('PEM'))
-# f.close()
-
-# server_public_key = server_key.publickey()
-# f = open('server_public_key.pem', 'w')
-# f.write(server_public_key.exportKey('PEM'))
-# f.close()
 
 
 if(len(sys.argv) != 4):
@@ -101,6 +91,9 @@ signature = unpickled_dict['signature']
 
 password = server_key.decrypt(encrypted_password)
 
+
+
+
 cipher = AES.new(password, AES.MODE_CBC, iv)
 padded_file = cipher.decrypt(ciphertext)
 
@@ -110,6 +103,7 @@ file = unpad(padded_file)
 f = open('decryptedfile', 'wb')
 f.write(file)
 f.close()
+
 
 #if running in trusted mode, use decryptedfile for verification. if running in untrusted mode, use fakefile for verification
 if mode == 't':
