@@ -12,3 +12,5 @@ Starting from a fresh Ubuntu 16.04 VM on GCP:
 ## Invokation
 
 The file that the client sends to the server must reside in the same directory as client.py. 
+
+Port numbers used must be greater than 1024 as an unprivileged user. Something to do with permissioning. 
