@@ -7,25 +7,25 @@ Documentation for programming assignment #1 of COMS 4180. You can also view this
 
 Starting from a fresh Ubuntu 16.04 VM on GCP:
 
-1. Install pip by running ```sudo apt-get install python-pip```
-2. Then install the pycrypto package with ```pip install pycrypto```
+1\. Install pip by running ```sudo apt-get install python-pip```
+2\. Then install the pycrypto package with ```pip install pycrypto```
 
 Place the following files all in the same directory:
 
-3. server.py
-4. client.py
-5. generate_server_keys.py
-6. generate_client_keys.py
+3\. server.py
+4\. client.py
+5\. generate_server_keys.py
+6\. generate_client_keys.py
 
 In the terminal, navigate to that directory, and
 
-7. run ```python generate_server_keys.py```. This will generate 2 files in the directory you are in: server_key.pem, which contains the server's private and public RSA keys, and server_public_key.pem, which contains only the server's public RSA key.
-8. run ```python generate_client_keys.py```. This will generate 2 files in the directory you are in: client_key.pem, which contains the client's private and public RSA keys, and client_public_key.pem, which contains only the client's public RSA key.
+7\. run ```python generate_server_keys.py```. This will generate 2 files in the directory you are in: server_key.pem, which contains the server's private and public RSA keys, and server_public_key.pem, which contains only the server's public RSA key.
+8\. run ```python generate_client_keys.py```. This will generate 2 files in the directory you are in: client_key.pem, which contains the client's private and public RSA keys, and client_public_key.pem, which contains only the client's public RSA key.
 
 
 ## Invokation
 
-9. start the server by running ```python server.py <port> <mode> <server key filename> <client public key filename>```. The arguments must be given in this order.
+9\. start the server by running ```python server.py <port> <mode> <server key filename> <client public key filename>```. The arguments must be given in this order.
 
   -Port values must be in the range [1024, 65535] inclusive. Port numbers under 1024 won't work (will result in an error) because of permissioning -- something to do with being an unprivileged user. 
   -<mode> must be either ```u``` or ```t```, standing for "untrusted" and "trusted". If running in untrusted mode, then there must be a file named ```fakefile``` in the same directory as server.py
@@ -34,7 +34,7 @@ In the terminal, navigate to that directory, and
 
 Example: ```python server.py 2000 t server_key.pem client_public_key.pem```
 
-10. run the client by running ```python client.py <server ip> <server port> <password> <filename> <client key filename> <server public key filename>```. The arguments must be given in this order.
+10\. run the client by running ```python client.py <server ip> <server port> <password> <filename> <client key filename> <server public key filename>```. The arguments must be given in this order.
 
   -<server ip> should be the IPv4 address where server.py (from step 9) is running. If both the server and client are running on the same machine, you can instead use ```localhost```
   -<server port> should be the same port value you specified in step 9.
