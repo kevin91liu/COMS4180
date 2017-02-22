@@ -1,3 +1,4 @@
+#author: kevin liu
 #creates 2 files: client_key.pem, which contains public and private RSA keys, and client_public_key.pem, which contains only the public RSA key
 
 from Crypto.PublicKey import RSA

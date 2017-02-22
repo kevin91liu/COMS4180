@@ -102,27 +102,30 @@ ciphertext = unpickled_dict['ciphertext']
 signature = unpickled_dict['signature']
 
 
+
+#if running in untrusted mode, use fakefile as the ciphertext
+if mode == 'u':
+	f = open('fakefile', 'rb')
+	ciphertext = f.read()
+	f.close()
+
+
+
 password = server_key.decrypt(encrypted_password)
 
 
 cipher = AES.new(password, AES.MODE_CBC, iv)
-padded_file = cipher.decrypt(ciphertext)
+try:
+	padded_file = cipher.decrypt(ciphertext)
+except ValueError as e: 
+	#then we know that the ciphertext length isn't a multiple of 16 (the AES block size) bytes, so it must be
+	#fakefile. therefore, we can terminate early and say verification failed
+	print 'Verification Failed'
+	exit()
 
 file = unpad(padded_file)
 
-#write the received file to disk
-f = open('decryptedfile', 'wb')
-f.write(file)
-f.close()
 
-
-#if running in trusted mode, use decryptedfile for verification. if running in untrusted mode, use fakefile for verification
-if mode == 't':
-	f = open('decryptedfile', 'rb')
-else: #then mode must be 'u' since we already validated above that mode is either 't' or 'u'
-	f = open('fakefile', 'rb')
-file = f.read()
-f.close()
 
 #come up with SHA256 hash of the file
 hasher = SHA256.new()
@@ -131,6 +134,10 @@ file_hash = hasher.digest()
 
 
 if client_public_key.verify(file_hash, signature):
+	#write the received file to disk
+	f = open('decryptedfile', 'wb')
+	f.write(file)
+	f.close()
 	print 'Verification Passed'
 else:
 	print 'Verification Failed'
