@@ -32,8 +32,8 @@ In the terminal, navigate to that directory, and
   
    * ```mode``` must be either ```u``` or ```t```, standing for "untrusted" and "trusted". If running in untrusted mode, then there must be a file named ```fakefile``` in the same directory as server.py
   
-   * ```server key filename``` should be a file that contains the server's public and private RSA keys. You can use ```server_key.pem```, generated in step 3, or another file of your choosing as long as it contains a public/private RSA key pair in .PEM format.
-   * ```client public key filename``` should be a file that contains the client's public RSA key. You can use ```client_public_key.pem```, generated in step 4, or another file of your choosing as long as it contains a public RSA key in .PEM format.
+   * ```server key filename``` should be a file that contains the server's public and private RSA keys. You can use ```server_key.pem```, generated above, or another file of your choosing as long as it contains a public/private RSA key pair in .PEM format.
+   * ```client public key filename``` should be a file that contains the client's public RSA key. You can use ```client_public_key.pem```, generated above, or another file of your choosing as long as it contains a public RSA key in .PEM format.
 
    Example: ```python server.py 2000 t server_key.pem client_public_key.pem```
 
@@ -44,8 +44,8 @@ In the terminal, navigate to that directory, and
    * ```server port``` should be the same port value you specified in step 5.
    * ```password``` must be a 16-character alphanumeric string. It will act as the AES block cipher's secret key
    * ```filename``` is the name of the file that the client is encrypting, signing, and sending to the server. It must be in the same directory as client.py.
-   * ```client key filename``` should be a file that contains the client's public and private RSA keys. You can use ```client_key.pem```, generated in step 4, or another file of your choosing as long as it contains a public/private RSA key pair in .PEM format
-   * ```server public key filename``` should be a file that contains the server's public RSA key. You can use ```server_public_key.pem```, generated in step 3, or another file of your choosing as long as it contains a public RSA key in .PEM format.
+   * ```client key filename``` should be a file that contains the client's public and private RSA keys. You can use ```client_key.pem```, generated above, or another file of your choosing as long as it contains a public/private RSA key pair in .PEM format
+   * ```server public key filename``` should be a file that contains the server's public RSA key. You can use ```server_public_key.pem```, generated above, or another file of your choosing as long as it contains a public RSA key in .PEM format.
 
    Example: ```python client.py localhost 2000 aaaabbbbccccdddd img.png client_key.pem server_public_key.pem```
 
