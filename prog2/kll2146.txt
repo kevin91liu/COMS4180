@@ -1,0 +1,883 @@
+Kevin Liu
+COMS 4180
+Programming assignment 2
+
+Best viewed in Sublime Text or a similar text editor. 
+
+Problem 1.
+
+a.
+
+  prog1
+
+    In the output of "strings prog1", some of the entries I see are:
+
+    /lib64/ld-linux-x86-64.so.2
+    libstdc++.so.6
+    libgcc_s.so.1
+    GCC_3.0
+    GLIBC_2.2.5
+    CXXABI_1.3
+    GLIBCXX_3.4
+    GCC: (GNU) 4.8.3 20140911 (Red Hat 4.8.3-7)
+    .gcc_except_table
+    crtstuff.c
+    ngdist.cpp
+
+    These lead me to believe that prog1 is written in C++. 
+
+  prog2
+    
+    In the output of "strings prog2", some of the entries I see are:
+
+    /lib64/ld-linux-x86-64.so.2
+    libstdc++.so.6
+    libgcc_s.so.1
+    main
+
+    which leads me to believe that this is also written in C++
+
+  prog3
+
+    In the output of "strings prog3", some of the entries I see are:
+
+    /lib64/ld-linux-x86-64.so.2
+    libstdc++.so.6
+    libgcc_s.so.1
+    fopen
+    memcmp
+    malloc
+    fprintf
+    GCC: (GNU) 4.8.3 20140911 (Red Hat 4.8.3-7)
+
+    which again leads me to think that this is also written in C++
+
+  prog4
+
+    This one is harder to tell, since "strings prog4" doesn't result in a bunch of strings hinting at C++ like in
+    the previous 3 programs. Most of the strings are meaningless junk. However, I do notice these two items, which hint at C++:
+
+    GCC: (GNU) 4.8.3 20140911
+    gnu.build-
+
+    Furthermore, the strings output also mentions this:
+
+    UPX!
+    $Info: This file is packed with the UPX executable packer http://upx.sf.net $
+    $Id: UPX 3.91 Copyright (C) 1996-2013 the UPX Team. All Rights Reserved. $
+
+    UPX, it turns out, is an executable packer. So it seems like it's possible that a C++ executable was packed with UPX, resulting in the file prog4. 
+
+  prog5
+
+    Very obviously Java. A sampling of "strings prog5" output:
+
+    prog6.java
+    java/util/ArrayList
+    java/lang/StringBuilder
+    java/lang/Object
+    java/util/List
+    java/lang/Math
+    println
+
+  prog6
+
+    Python. A sampling of "strings prog6" output:
+
+    /usr/lib/python2.7/site-packages/scapy/layers/ntp.pyR
+    /usr/lib/python2.7/site-packages/scapy/layers/ntp.pyt
+    scapy.packett
+
+    So it seems like this program is actually scapy
+
+b.
+
+  prog1 and prog2
+
+    These two programs are similar in a meaningful way. When you run ssdeep, ssdeep comes up with a match between
+    prog1 and prog2 but not between any other pair:
+
+      Kevins-MacBook-Pro:prog2 kevinliu$ ssdeep -p prog1 prog2 prog3 prog4 prog5 prog6
+      /Users/kevinliu/dev/columbia/COMS4180/prog2/prog1 matches /Users/kevinliu/dev/columbia/COMS4180/prog2/prog2 (69)
+
+      /Users/kevinliu/dev/columbia/COMS4180/prog2/prog2 matches /Users/kevinliu/dev/columbia/COMS4180/prog2/prog1 (69)
+
+    Furthermore, if we compare prog1 and prog2 for their top ngrams, they look similar. For example (copied from part c):
+
+    python problem1.py 3 1 prog1 prog1.output
+    000000 9485
+    ffff48 734
+    89c7e8 581
+    4889c7 577
+    488b45 470
+
+    python problem1.py 3 1 prog2 prog2.output
+    000000 9967
+    ffff48 540
+    89c7e8 472
+    4889c7 468
+    488b45 368
+
+    Finally, when you run "strings prog1" and "strings prog2", they share many, many overlapping strings. For example,
+
+    _ZN9__gnu_cxx13new_allocatorISt4pairISsdEE7destroyEPS2_
+
+    appears in both, as well as many other strings that begin in "_ZN"
+
+
+
+  prog1 and prog3
+
+    Despite having similar file sizes (60403 bytes for prog1 vs 59926 bytes for prog3), both appearing to be written in
+    C++ (as I mentioned in part a), and both having many strings starting with "_ZN" if you run strings, ssdeep did not
+    find a match between these two files. If we do an ngram analysis, the top 5 ngrams for n=3, s=1 are
+
+    python problem1.py 3 1 prog1 prog1.output
+    000000 9485
+    ffff48 734
+    89c7e8 581
+    4889c7 577
+    488b45 470
+
+    python problem1.py 3 1 prog3 prog3.output
+    000000 11807
+    4889c7 546
+    89c7e8 546
+    488b45 456
+    400000 344
+
+    They share in common having 000000 in the #1 spot (though the fact that 000000 wins by such a large margin makes me
+    skeptical that it's a useful indicator) and 89c7e8 in the #3 spot. Both have 4889c7 and 488b45 appear in the top 5. 
+    However, prog1 has ffff48 appear as #2, but prog3 has ffff48 appearing in the #6 spot (not shown here; but shown in
+    part c)
+
+
+  prog1 and prog4
+
+    These two programs are not similar in file size (60403 bytes for prog1 vs 19976 bytes for prog4). From part 1, I
+    mentioned it seemed that prog1 is a C++ program while prog4 is a C++ program packed inside of an executable packer. 
+    ssdeep did not find a match, and strings shows a big difference as well: for prog1, most strings results start with
+    "_ZN", while strings prog4 results in a lot of random meaningless strings like:
+    
+    Ss6a?g
+    7]_Mv
+    ::deE
+
+  prog1 and prog5
+
+  prog1 and prog6
+
+  prog2 and prog3
+
+  prog2 and prog4
+
+  prog2 and prog5
+
+  prog2 and prog6
+
+  prog3 and prog4
+
+  prog3 and prog5
+
+  prog3 and prog6
+
+  prog4 and prog5
+
+  prog4 and prog6
+
+  prog5 and prog6
+
+
+c.
+
+  --List the 20 bytes (1-grams) in hex that occur the most along with a count of each
+
+  prog1
+  python problem1.py 1 1 prog1 prog1.output
+  00 16631
+  48 3359
+  ff 3146
+  5f 1730
+  89 1710
+  45 1572
+  53 1026
+  74 1019
+  8b 888
+  e8 868
+  61 850
+  49 702
+  72 683
+  c7 659
+  40 658
+  8d 619
+  65 550
+  69 537
+  31 476
+  63 473
+
+
+  prog2
+  python problem1.py 1 1 prog2 prog2.output
+  00 16916
+  48 2778
+  ff 2472
+  5f 1728
+  89 1481
+  45 1407
+  53 1031
+  74 1022
+  61 841
+  e8 745
+  49 709
+  8b 709
+  72 677
+  40 577
+  65 543
+  69 535
+  c7 528
+  31 480
+  63 465
+  73 451
+
+
+  prog3
+  python problem1.py 1 1 prog3 prog3.output
+  00 19211
+  48 2902
+  ff 2304
+  5f 1857
+  89 1612
+  45 1439
+  74 1012
+  8b 841
+  e8 826
+  53 797
+  65 743
+  61 684
+  49 667
+  40 634
+  c7 615
+  69 602
+  72 589
+  6f 523
+  63 489
+  6e 455
+
+
+  prog4
+  python problem1.py 1 1 prog4 prog4.output
+  00 515
+  17 293
+  07 230
+  ff 194
+  5f 186
+  01 181
+  10 175
+  20 174
+  08 169
+  1f 163
+  48 162
+  03 159
+  b0 154
+  02 150
+  0c 144
+  0f 144
+  2f 139
+  06 138
+  04 137
+  40 137
+
+
+  prog5
+  python problem1.py 1 1 prog5 prog5.output
+  00 202
+  61 71
+  01 48
+  2f 41
+  6e 34
+  74 34
+  69 29
+  72 29
+  6c 28
+  67 26
+  65 24
+  6a 24
+  76 22
+  07 19
+  4c 16
+  0a 14
+  0c 13
+  53 13
+  6f 13
+  28 12
+
+
+  prog6
+  python problem1.py 1 1 prog6 prog6.output
+  00 1004
+  74 147
+  64 121
+  73 102
+  65 98
+  01 89
+  69 81
+  02 63
+  70 58
+  61 57
+  2f 56
+  03 54
+  72 52
+  79 45
+  28 44
+  6e 43
+  6c 42
+  52 41
+  63 40
+  04 34
+
+
+  --List the top 20 2-grams in hex along with a count for each for a slide of 1 and a slide of 2
+  (For each program, I first run n=2 s=1, then n=2 s=2)
+
+  prog1
+  python problem1.py 2 1 prog1 prog1.output
+  0000 12375
+  ffff 1670
+  4889 1597
+  488b 810
+  ff48 759
+  89c7 581
+  c7e8 581
+  488d 532
+  8b45 477
+  4000 439
+  5374 406
+  0048 401
+  4953 322
+  005f 316
+  8d85 291
+  7249 288
+  5f5a 270
+  4545 245
+  0d00 236
+  0800 229
+  python problem1.py 2 2 prog1 prog1.output
+  0000 5869
+  4889 778
+  ffff 663
+  ff48 388
+  488b 351
+  89c7 307
+  8b45 274
+  c7e8 274
+  488d 258
+  000d 209
+  0048 206
+  5374 190
+  0022 189
+  005f 171
+  0243 165
+  410e 165
+  4953 165
+  0d06 164
+  1086 164
+  001c 154
+
+
+  prog2
+  python problem1.py 2 1 prog2 prog2.output
+  0000 12804
+  4889 1386
+  ffff 1313
+  488b 679
+  ff48 550
+  89c7 472
+  c7e8 472
+  5374 406
+  4000 397
+  8b45 377
+  488d 340
+  0048 326
+  4953 322
+  005f 318
+  7249 288
+  5f5a 271
+  4545 245
+  0d00 241
+  0800 224
+  000d 210
+  python problem1.py 2 2 prog2 prog2.output
+  0000 6087
+  4889 652
+  ffff 476
+  ff48 288
+  488b 280
+  89c7 253
+  8b45 227
+  c7e8 219
+  000d 209
+  5374 205
+  0022 190
+  488d 175
+  0048 170
+  0243 166
+  410e 166
+  0d06 165
+  1086 165
+  4953 160
+  001c 158
+  f848 154
+
+
+  prog3
+  python problem1.py 2 1 prog3 prog3.output
+  0000 14818
+  4889 1489
+  ffff 1231
+  488b 751
+  89c7 547
+  c7e8 546
+  8b45 477
+  4000 475
+  0048 399
+  ff48 338
+  005f 313
+  6f72 265
+  5f5a 262
+  4545 244
+  0d00 243
+  0800 237
+  5374 234
+  f848 227
+  488d 220
+  000d 218
+  python problem1.py 2 2 prog3 prog3.output
+  0000 7088
+  4889 754
+  ffff 430
+  488b 311
+  89c7 276
+  8b45 270
+  c7e8 270
+  000d 218
+  0022 202
+  0048 185
+  f848 177
+  0243 176
+  410e 175
+  0d06 174
+  1086 174
+  ff48 171
+  001c 163
+  005f 151
+  0708 145
+  5f5a 134
+
+
+  prog4
+  python problem1.py 2 1 prog4 prog4.output
+  0000 214
+  3c97 25
+  ffff 21
+  4dd3 18
+  0200 17
+  344d 16
+  4000 15
+  699a 14
+  d334 14
+  0002 13
+  973c 13
+  ff0f 13
+  ff17 13
+  2083 12
+  830c 12
+  a669 12
+  1414 11
+  0040 10
+  4889 10
+  6017 9
+  python problem1.py 2 2 prog4 prog4.output
+  0000 97
+  973c 12
+  ffff 12
+  0002 11
+  344d 10
+  4dd3 9
+  a669 8
+  ff0f 8
+  d334 7
+  0040 6
+  1414 6
+  699a 6
+  830c 6
+  c880 6
+  c9c3 6
+  ff17 6
+  0200 5
+  1048 5
+  4000 5
+  6007 5
+
+
+  prog5
+  python problem1.py 2 1 prog5 prog5.output
+  0100 45
+  0000 35
+  6e67 22
+  7661 22
+  6176 21
+  6a61 21
+  612f 20
+  0700 15
+  616e 15
+  2f6c 14
+  672f 14
+  696e 14
+  6c61 14
+  0c00 12
+  4c6a 11
+  5374 11
+  7269 11
+  0a00 10
+  7472 10
+  0001 9
+  python problem1.py 2 2 prog5 prog5.output
+  0000 18
+  0100 18
+  7661 17
+  6a61 16
+  616e 12
+  2f6c 11
+  672f 11
+  0c00 9
+  6e67 9
+  5374 7
+  0007 6
+  696e 6
+  7269 6
+  000b 5
+  0a00 5
+  3b29 5
+  612f 5
+  6176 5
+  0001 4
+  0002 4
+
+
+  prog6
+  python problem1.py 2 1 prog6 prog6.output
+  0000 535
+  0064 86
+  0200 52
+  0300 52
+  0074 49
+  0100 44
+  0073 41
+  0400 31
+  0052 27
+  7079 27
+  0083 25
+  0500 23
+  007c 21
+  0600 20
+  0800 20
+  2800 20
+  0700 19
+  0028 18
+  0065 18
+  6e74 17
+  python problem1.py 2 2 prog6 prog6.output
+  0000 264
+  0064 42
+  0300 28
+  0074 27
+  0073 26
+  0200 24
+  0100 22
+  7079 15
+  0400 14
+  0052 11
+  0065 11
+  0600 11
+  0500 10
+  0700 10
+  2f6c 10
+  2f73 10
+  6572 10
+  6e74 10
+  007c 9
+  0800 9
+
+
+  --List the 20 top 3-grams in hex along with the count of each for a slide of 1 and a slide of 3
+  (For each program, I first run n=3 s=1, then n=3 s=3)
+
+  prog1
+  python problem1.py 3 1 prog1 prog1.output
+  000000 9485
+  ffff48 734
+  89c7e8 581
+  4889c7 577
+  488b45 470
+  ff4889 333
+  400000 328
+  488d85 291
+  000048 277
+  005f5a 268
+  ffffff 249
+  ff488d 234
+  080000 226
+  feffff 221
+  000d00 208
+  004889 206
+  5f5a4e 204
+  000022 188
+  002200 187
+  22000d 183
+  python problem1.py 3 3 prog1 prog1.output
+  000000 3208
+  ffff48 256
+  4889c7 215
+  89c7e8 193
+  002200 187
+  488b45 166
+  ff4889 101
+  000048 88
+  488d85 84
+  feffff 79
+  ff488d 79
+  ffffff 79
+  005f5a 78
+  080000 72
+  5f5a4e 68
+  fdffff 67
+  001200 66
+  004889 62
+  537434 62
+  554889 62
+
+
+  prog2
+  python problem1.py 3 1 prog2 prog2.output
+  000000 9967
+  ffff48 540
+  89c7e8 472
+  4889c7 468
+  488b45 368
+  400000 329
+  005f5a 269
+  000048 241
+  ff4889 240
+  080000 222
+  000d00 210
+  5f5a4e 204
+  ffffff 195
+  488d85 193
+  000022 188
+  002200 187
+  22000d 183
+  537434 176
+  746f72 173
+  347061 171
+  python problem1.py 3 3 prog2 prog2.output
+  000000 3108
+  400000 267
+  22000d 183
+  ffff48 180
+  89c7e8 173
+  4889c7 150
+  488b45 127
+  120000 106
+  000048 85
+  600000 84
+  005f5a 83
+  ff4889 79
+  080000 77
+  488d85 70
+  ffffff 70
+  070000 68
+  1c0000 65
+  5f5a4e 64
+  746f72 61
+  02430d 59
+
+
+  prog3
+  python problem1.py 3 1 prog3 prog3.output
+  000000 11807
+  4889c7 546
+  89c7e8 546
+  488b45 456
+  400000 344
+  ffff48 338
+  005f5a 262
+  000048 251
+  080000 235
+  000d00 217
+  746f72 210
+  000022 197
+  004889 194
+  ffffff 193
+  002200 192
+  1c0000 187
+  22000d 187
+  5f5a4e 187
+  4889e5 178
+  0c0708 177
+  python problem1.py 3 3 prog3 prog3.output
+  000000 3758
+  400000 277
+  22000d 187
+  89c7e8 175
+  488b45 166
+  4889c7 159
+  ffff48 110
+  080000 96
+  005f5a 90
+  600000 88
+  1c0000 73
+  000048 72
+  746f72 69
+  ffffff 68
+  004889 67
+  5f5a4e 66
+  070000 65
+  48897d 65
+  00410e 64
+  108602 64
+
+
+  prog4
+  python problem1.py 3 1 prog4 prog4.output
+  000000 136
+  3c973c 13
+  973c97 12
+  000200 8
+  d3344d 8
+  000002 7
+  004000 7
+  344dd3 7
+  4dd334 7
+  555058 7
+  a6699a 7
+  ffffff 7
+  000040 6
+  020000 6
+  400000 6
+  010000 5
+  141414 5
+  20830c 5
+  830c32 5
+  000001 4
+  python problem1.py 3 3 prog4 prog4.output
+  000000 46
+  1e4883 4
+  3c973c 4
+  830c32 4
+  973c97 4
+  eefc11 4
+  000001 3
+  344dd3 3
+  400000 3
+  4dd334 3
+  db8a16 3
+  ffd311 3
+  000002 2
+  000028 2
+  000200 2
+  000500 2
+  004000 2
+  00ff00 2
+  010000 2
+  020000 2
+
+
+  prog5
+  python problem1.py 3 1 prog5 prog5.output
+  617661 21
+  6a6176 21
+  000000 20
+  76612f 20
+  2f6c61 14
+  612f6c 14
+  616e67 14
+  6c616e 14
+  6e672f 14
+  4c6a61 11
+  72696e 11
+  537472 10
+  000100 8
+  672f53 8
+  696e67 8
+  747269 8
+  2f5374 7
+  000b00 5
+  284c6a 5
+  3b0100 5
+  python problem1.py 3 3 prog5 prog5.output
+  000000 12
+  617661 10
+  2f6c61 8
+  6e672f 8
+  6a6176 7
+  612f6c 5
+  616e67 5
+  010015 4
+  284c6a 4
+  537472 4
+  696e67 4
+  76612f 4
+  000b00 3
+  010003 3
+  65723b 3
+  72696e 3
+  000002 2
+  000100 2
+  001628 2
+  010004 2
+
+
+  prog6
+  python problem1.py 3 1 prog6 prog6.output
+  000000 272
+  000073 41
+  000074 39
+  030000 28
+  000052 25
+  280000 19
+  000028 18
+  040000 17
+  002800 16
+  060000 14
+  740300 14
+  640200 13
+  657273 13
+  740400 13
+  006402 12
+  010000 12
+  020000 12
+  080000 12
+  007c02 11
+  010064 11
+  python problem1.py 3 3 prog6 prog6.output
+  000000 84
+  000073 17
+  000074 14
+  000028 8
+  030000 8
+  640200 8
+  740400 8
+  000052 7
+  020000 7
+  280000 7
+  830200 6
+  840000 6
+  006409 5
+  010064 5
+  040000 5
+  050000 5
+  080000 5
+  640000 5
+  640100 5
+  640300 5
+
