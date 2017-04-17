@@ -1,6 +1,6 @@
 # Kevin Liu
 
-Programming assignment 2.
+Programming assignment 2. This readme can also be viewed at https://github.com/kevin91liu/COMS4180/tree/master/prog2
 
 ## Instructions to execute
 

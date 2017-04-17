@@ -972,7 +972,8 @@ b.
 Unfortunately, I seem to be running into a bug coming from some library, not a bug in my own code. I've made many attempts
 to fix it and googled around for the answer, with no success. Below, I've pasted what I'm seeing. In particular, the
 exception occurs in the last line of my problem2.py when I try to send(packet). Because I see some printed messages with 
-"Bugs ahead!", it seems like scapy (or one of its dependencies) has some bug in it. 
+"Bugs ahead!", it seems like scapy (or one of its dependencies) has some bug in it. Therefore, I'm not able to provide
+tcpdump output since nothing is getting send in the first place. 
 
   Kevins-MacBook-Pro:prog2 kevinliu$ sudo python problem2.py 
   ###[ IP ]###
