@@ -1,8 +1,8 @@
-#Kevin Liu
+# Kevin Liu
 
 Programming assignment 2.
 
-##Instructions to execute
+## Instructions to execute
 
 - Run the ngram program from the command line with:
 
@@ -22,6 +22,6 @@ Example:
 Example:
 ``sudo python problem2c.py 2099 2552``
 
-##Output
+## Output
 
 The program outputs (both to the console, and to the output file) the top-20 ngrams, the unique number of ngrams, and the time it took to execute. For the largest of the files, prog1, running ``python problem1.py 3 1 prog1 prog1.output`` takes 0.18 seconds. 
