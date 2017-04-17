@@ -2,3 +2,5 @@
 *.strings
 
 *.output
+
+prog2/wireshark_ssdeep.pcapng

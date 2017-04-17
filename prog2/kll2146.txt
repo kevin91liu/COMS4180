@@ -50,7 +50,19 @@ a.
     fprintf
     GCC: (GNU) 4.8.3 20140911 (Red Hat 4.8.3-7)
 
-    which again leads me to think that this is also written in C++
+    which again leads me to think that this is also written in C++. In particular, it seems this program is written to do
+    some sort of ngram analysis, because some of the strings entries are:
+
+    number_of_ngrams:
+    distinct_ngrams:
+    range_of_percents_all_ngrams:
+    range_of_interest:
+    range_of_percents_within_range_of_interest:
+    ngrams_inside_range:
+    distinct_ngrams_inside_range:
+    distint_ngrams_outside_(
+    ngrams_outside_(
+
 
   prog4
 
@@ -88,7 +100,7 @@ a.
     /usr/lib/python2.7/site-packages/scapy/layers/ntp.pyt
     scapy.packett
 
-    So it seems like this program is actually scapy
+    So it seems like this program uses scapy.
 
 b.
 
@@ -163,29 +175,70 @@ b.
     7]_Mv
     ::deE
 
+    Finally, their ngram distributions are not similar. 
+
   prog1 and prog5
+
+    ssdeep did not find a match. From part a, prog1 seems to be written in C++, while prog5 seems to be written in Java. 
+    So, they are not similar. 
 
   prog1 and prog6
 
+    From part a, prog1 seems to be C++, while prog6 seems to be in Python. So they don't seem similar. ssdeep did not match.
+
   prog2 and prog3
+
+    Both seem to be written in C++, from part a. But it seems like prog3 is an ngram-analysis program (mentioned in part a)
+    while prog1 doesn't have the strings that indicate it is an ngram-analysis program. ssdeep did not match. However, if
+    you compare their top-20 ngrams to each other (part c), they share many of the same ngrams in similar positions
 
   prog2 and prog4
 
+    Their file sizes are different, and from strings analysis it seems like prog2 is C++ while prog4 is a C++ program
+    packed with the UPX executable packer. ssdeep did not find a match. Finally, their ngram distributions are noticeably
+    different. 
+
   prog2 and prog5
+
+    prog2 seems to be a C++ program, while prog5 seems to be written in Java, based on strings analysis which shows very
+    different strings in each. Their ngram distributions are different. ssdeep did not find a match. 
 
   prog2 and prog6
 
+    ssdeep did not find a match. Their ngram distributions are different. Using strings analysis, prog2 seems to be 
+    written in C++, while prog6 seems to be written in Python. 
+
   prog3 and prog4
+
+    ssdeep did not find a match. Using strings analysis, it seems prog3 is a C++ ngram-analysis program, and the ngram
+    strings don't appear in prog4. prog4 seems to be packed with the UPX executable packer, while prog3 is not. Finally,
+    their ngram distributions are different. 
 
   prog3 and prog5
 
+    From strings analysis, prog3 is a C++ program and prog5 is a Java program. ssdeep did not find a match. Their ngram
+    distributions are different. 
+
   prog3 and prog6
+
+    prog3 is a C++ program, and prog6 is a Python program. ssdeep did not find a match. Their ngram distributions are 
+    different. 
 
   prog4 and prog5
 
+    prog4 is a C++ program packed with UPX, while prog5 is a Java program. ssdeep did not find a match. Their ngram
+    distributions are different.
+
   prog4 and prog6
+  
+    prog4 is a C++ program packed with UPX, while prog6 is a Python program that uses scapy. ssdeep did not find a 
+    match. Their ngram distributions are different. 
 
   prog5 and prog6
+
+    prog5 is a Java program, while prog6 is a Python program that uses scapy. ssdeep did not find a match. Their
+    ngram distributions are different. 
+
 
 
 c.
@@ -881,3 +934,189 @@ c.
   640100 5
   640300 5
 
+
+
+Problem 2
+
+a. 
+
+  From scapy interative mode:
+
+  >>> ans,unans=sr(IP(dst="172.217.10.132")/ICMP())
+  Begin emission:
+  Finished to send 1 packets.
+  .....*
+  Received 6 packets, got 1 answers, remaining 0 packets
+  >>> ans.show()
+  0000 IP / ICMP 192.168.0.18 > 172.217.10.132 echo-request 0 ==> IP / ICMP 172.217.10.132 > 192.168.0.18 echo-reply 0 / Padding
+
+  From tcpdump:
+
+  Kevins-MacBook-Pro:prog2 kevinliu$ tcpdump -i 1 -vv -XX -n icmp
+  tcpdump: listening on en0, link-type EN10MB (Ethernet), capture size 262144 bytes
+  20:24:52.662106 IP (tos 0x0, ttl 64, id 1, offset 0, flags [none], proto ICMP (1), length 28)
+      192.168.0.18 > 172.217.10.132: ICMP echo request, id 0, seq 0, length 8
+    0x0000:  acb3 13ae 12c7 acbc 327e 04fb 0800 4500  ........2~....E.
+    0x0010:  001c 0001 0000 4001 02c9 c0a8 0012 acd9  ......@.........
+    0x0020:  0a84 0800 f7ff 0000 0000                 ..........
+  20:24:52.687693 IP (tos 0x0, ttl 55, id 0, offset 0, flags [none], proto ICMP (1), length 28)
+      172.217.10.132 > 192.168.0.18: ICMP echo reply, id 0, seq 0, length 8 (wrong icmp cksum 0 (->ffff)!)
+    0x0000:  acbc 327e 04fb acb3 13ae 12c7 0800 4500  ..2~..........E.
+    0x0010:  001c 0000 0000 3701 0bca acd9 0a84 c0a8  ......7.........
+    0x0020:  0012 0000 0000 0000 0000 0000 0000 0000  ................
+    0x0030:  0000 0000 0000 0000                      ........
+
+
+b. 
+
+Unfortunately, I seem to be running into a bug coming from some library, not a bug in my own code. I've made many attempts
+to fix it and googled around for the answer, with no success. Below, I've pasted what I'm seeing. In particular, the
+exception occurs in the last line of my problem2.py when I try to send(packet). Because I see some printed messages with 
+"Bugs ahead!", it seems like scapy (or one of its dependencies) has some bug in it. 
+
+  Kevins-MacBook-Pro:prog2 kevinliu$ sudo python problem2.py 
+  ###[ IP ]###
+    version   = 4
+    ihl       = None
+    tos       = 0x0
+    len       = None
+    id        = 1
+    flags     = 
+    frag      = 0
+    ttl       = 64
+    proto     = tcp
+    chksum    = None
+    src       = 192.168.0.18
+    dst       = 192.168.0.12
+    \options   \
+  ###[ TCP ]###
+       sport     = 58334
+       dport     = http
+       seq       = 0
+       ack       = 0
+       dataofs   = None
+       reserved  = 0
+       flags     = S
+       window    = 8192
+       chksum    = None
+       urgptr    = 0
+       options   = {}
+  ###[ Raw ]###
+          load      = 'GET / HTTP/1.1'
+  E6@?R????
+           ??PP e?GET / HTTP/1.1
+  WARNING: fileno: pcapy API does not permit to get capure file descriptor. Bugs ahead! Press Enter to trigger packet reading
+  WARNING: fileno: pcapy API does not permit to get capure file descriptor. Bugs ahead! Press Enter to trigger packet reading
+  WARNING: more fileno: pcapy API does not permit to get capure file descriptor. Bugs ahead! Press Enter to trigger packet reading
+  Traceback (most recent call last):
+    File "problem2.py", line 23, in <module>
+      send(packet)
+    File "/Library/Python/2.7/site-packages/scapy/sendrecv.py", line 258, in send
+      realtime=realtime, return_packets=return_packets)
+    File "/Library/Python/2.7/site-packages/scapy/sendrecv.py", line 236, in __gen_send
+      s.send(p)
+    File "/Library/Python/2.7/site-packages/scapy/arch/pcapdnet.py", line 257, in send
+      sx = str(cls()/x)
+    File "/Library/Python/2.7/site-packages/scapy/packet.py", line 272, in __str__
+      return self.build()
+    File "/Library/Python/2.7/site-packages/scapy/packet.py", line 349, in build
+      p = self.do_build()
+    File "/Library/Python/2.7/site-packages/scapy/packet.py", line 336, in do_build
+      pkt = self.self_build()
+    File "/Library/Python/2.7/site-packages/scapy/packet.py", line 327, in self_build
+      p = f.addfield(self, p, val)
+    File "/Library/Python/2.7/site-packages/scapy/fields.py", line 70, in addfield
+      return s+struct.pack(self.fmt, self.i2m(pkt,val))
+    File "/Library/Python/2.7/site-packages/scapy/layers/l2.py", line 95, in i2m
+      return MACField.i2m(self, pkt, self.i2h(pkt, x))
+    File "/Library/Python/2.7/site-packages/scapy/layers/l2.py", line 89, in i2h
+      x = conf.neighbor.resolve(pkt,pkt.payload)
+    File "/Library/Python/2.7/site-packages/scapy/layers/l2.py", line 38, in resolve
+      return self.resolvers[k](l2inst,l3inst)
+    File "/Library/Python/2.7/site-packages/scapy/layers/inet.py", line 737, in <lambda>
+      conf.neighbor.register_l3(Ether, IP, lambda l2,l3: getmacbyip(l3.dst))
+    File "/Library/Python/2.7/site-packages/scapy/layers/l2.py", line 73, in getmacbyip
+      nofilter=1)
+    File "/Library/Python/2.7/site-packages/scapy/sendrecv.py", line 384, in srp1
+      a,b=srp(*args,**kargs)
+    File "/Library/Python/2.7/site-packages/scapy/sendrecv.py", line 367, in srp
+      a,b=sndrcv(s ,x,*args,**kargs)
+    File "/Library/Python/2.7/site-packages/scapy/sendrecv.py", line 127, in sndrcv
+      r = pks.nonblock_recv()
+    File "/Library/Python/2.7/site-packages/scapy/arch/pcapdnet.py", line 354, in nonblock_recv
+      p = self.recv(MTU)
+    File "/Library/Python/2.7/site-packages/scapy/arch/pcapdnet.py", line 335, in recv
+      pkt = self.ins.next()
+    File "/Library/Python/2.7/site-packages/scapy/arch/pcapdnet.py", line 92, in next
+      s,us = h.getts()
+  AttributeError: 'NoneType' object has no attribute 'getts'
+  WARNING: __del__: don't know how to close the file descriptor. Bugs ahead ! Please report this bug.
+  WARNING: __del__: don't know how to close the file descriptor. Bugs ahead ! Please report this bug.
+  Kevins-MacBook-Pro:prog2 kevinliu$ 
+
+
+c. 
+
+Strangely, this works just fine. Since I ran into the exception when I used send(packet) in 2b, I expected the same
+problem to occur here, but it did not. A copy+paste of my terminal below: 
+
+  Kevins-MacBook-Pro:prog2 kevinliu$ sudo python problem2c.py 2099 2552
+  WARNING: fileno: pcapy API does not permit to get capure file descriptor. Bugs ahead! Press Enter to trigger packet reading
+  .WARNING: __del__: don't know how to close the file descriptor. Bugs ahead ! Please report this bug.
+
+  Sent 1 packets.
+  WARNING: fileno: pcapy API does not permit to get capure file descriptor. Bugs ahead! Press Enter to trigger packet reading
+  .WARNING: __del__: don't know how to close the file descriptor. Bugs ahead ! Please report this bug.
+
+  Sent 1 packets.
+  WARNING: more fileno: pcapy API does not permit to get capure file descriptor. Bugs ahead! Press Enter to trigger packet reading
+  .WARNING: more __del__: don't know how to close the file descriptor. Bugs ahead ! Please report this bug.
+
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  .
+  Sent 1 packets.
+  Kevins-MacBook-Pro:prog2 kevinliu$ 
